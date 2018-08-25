@@ -20,6 +20,7 @@ public class WildCalculator
 
 	private double adjustC(double constantC, double target, double probability)
 	{
+		//C value things
 //		System.out.println("Adjusting C value...");
 		while (Math.abs(target - probability) > 10e-8)
 		{
@@ -28,6 +29,7 @@ public class WildCalculator
 			else
 				constantC = constantC + (target - probability)/2;
 
+			//Matrix things
 //			System.out.println("Creating matrix...");
 
 			tempDouble = Math.ceil(1 / constantC);
@@ -36,17 +38,22 @@ public class WildCalculator
 			matrix = new Matrix(size, size);
 
 //			System.out.println("Populating...");
-			for (int n = 0; n < matrix.getRowDimension(); n++)
+			for (int n = 1; n < matrix.getRowDimension()+1; n++)
 				if (n*constantC < 1)
-					matrix.set(n, 1, n*constantC);
+					matrix.set(n-1, 0, n*constantC);
 				else
-					matrix.set(n, 1, 1);
+					matrix.set(n-1, 0, 1);
 
 			for (int n = 0; n < matrix.getRowDimension() - 1; n++)
-				matrix.set(n,n+1, 1-matrix.get(n, 1));
+				matrix.set(n,n+1, 1-matrix.get(n, 0));
 
 			System.out.println("Matrix done");
 
+
+
+
+
+			//Eigenvector things
 //			System.out.println("Setting up eigenmatrix...");
 			EigenvalueDecomposition decomposer = new EigenvalueDecomposition(matrix.transpose());
 			Matrix eigenVectors = decomposer.getV();
@@ -55,7 +62,7 @@ public class WildCalculator
 			int[] rows = new int[eigenVectors.getRowDimension()];
 			for (int i = 0; i < rows.length; i++) {rows[i] = i;}
 
-			Matrix eigenFirstColumn = eigenVectors.getMatrix(rows, 1, 1);
+			Matrix eigenFirstColumn = eigenVectors.getMatrix(rows, 0, 0);
 
 //			System.out.println("Snatching first eigenvector...");
 			double eigenSum = 0;
